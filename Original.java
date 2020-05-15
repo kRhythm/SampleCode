@@ -81,18 +81,7 @@ public class SourceFileInfoExtractor {
         return ko;
     }
 
-    private void solveTypeDecl(ClassOrInterfaceDeclaration node) {
-        ResolvedTypeDeclaration typeDeclaration = JavaParserFacade.get(typeSolver).getTypeDeclaration(node);
-        if (typeDeclaration.isClass()) {
-            out.println("\n[ Class " + typeDeclaration.getQualifiedName() + " ]");
-            for (ResolvedReferenceType sc : typeDeclaration.asClass().getAllSuperClasses()) {
-                out.println("  superclass: " + sc.getQualifiedName());
-            }
-            for (ResolvedReferenceType sc : typeDeclaration.asClass().getAllInterfaces()) {
-                out.println("  interface: " + sc.getQualifiedName());
-            }
-        }
-    }
+    
 
     private void solve(Node node) {
         if (node instanceof ClassOrInterfaceDeclaration) {
@@ -129,25 +118,7 @@ public class SourceFileInfoExtractor {
         }
     }
 
-    private String toString(MethodCallExpr node) {
-        try {
-            return toString(JavaParserFacade.get(typeSolver).solve(node));
-        } catch (Exception e) {
-            if (verbose) {
-                System.err.println("Error resolving call at L" + node.getBegin().get().line + ": " + node);
-                e.printStackTrace();
-            }
-            return "ERROR";
-        }
-    }
-
-    private String toString(SymbolReference<ResolvedMethodDeclaration> methodDeclarationSymbolReference) {
-        if (methodDeclarationSymbolReference.isSolved()) {
-            return methodDeclarationSymbolReference.getCorrespondingDeclaration().getQualifiedSignature();
-        } else {
-            return "UNSOLVED";
-        }
-    }
+   
 
     private List<Node> collectAllNodes(Node node) {
         List<Node> nodes = new LinkedList<>();
