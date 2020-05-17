@@ -44,12 +44,7 @@ public class SourceFileInfoExtractor {
     private PrintStream out = System.out;
     private PrintStream err = System.err;
 
-    public void setVerbose(boolean verbose) {
-        this.verbose = verbose;
-    }
-
-    private boolean verbose = false;
-
+ 
     public void setPrintFileName(boolean printFileName) {
         this.printFileName = printFileName;
     }
