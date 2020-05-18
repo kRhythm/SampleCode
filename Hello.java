@@ -25,17 +25,29 @@ abstract class BasicJBehaveTest extends JUnitStories {
         JUnitReportingRunner.recommendedControls(configuredEmbedder());
     }
 
-    @Override
-    public final Configuration configuration() {
-        return new MostUsefulConfiguration()
-                // where to find the stories
-               
-                // Fails if Steps are not implemented
-                .usePendingStepStrategy(new FailingUponPendingStep())
-                // CONSOLE and HTML reporting
-                .useStoryReporterBuilder(new StoryReporterBuilder().withDefaultFormats()
-                        .withFormats(Format.CONSOLE, Format.HTML));
+    public void solve(Path path) throws IOException {
+        Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                if (file.toString().endsWith(".java")) {
+                    if (printFileName) {
+                        out.println("- parsing " + file.toAbsolutePath());
+                    }
+                    CompilationUnit cu = parse(file);
+                    List<Node> nodes = collectAllNodes(cu);
+                    nodes.forEach(n -> solve(n));
+                }
+                return FileVisitResult.CONTINUE;
+            }
+        });
     }
+    private List<Node> collectAllNodes(Node node) {
+        List<Node> nodes = new ArrayList<>();
+        node.walk(nodes::add);
+        nodes.sort(comparing(n -> n.getBegin().get()));
+        return nodes;
+    }
+    
      public void solveMethodCalls(Path path) throws IOException {
         Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
             @Override
