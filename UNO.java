@@ -20,30 +20,7 @@ import static com.github.javaparser.serialization.JavaParserJsonSerializer.*;
  * Deserializes the JSON file that was built by {@link JavaParserJsonSerializer}.
  */
 public class JavaParserJsonDeserializer {
-    /**
-     * Deserializes json, contained by JsonReader, into AST node.
-     * The root node and all its child nodes will be deserialized.
-     * @param reader json-p reader (object-level reader, <a href="https://javaee.github.io/jsonp/">see their docs</a>)
-     * @return the root level deserialized node
-     */
-    public Node deserializeObject(JsonReader reader) {
-        Log.info("Deserializing JSON to Node.");
-        JsonObject jsonObject = reader.readObject();
-        return deserializeObject(jsonObject);
-    }
-
-    /**
-     * Recursive depth-first deserializing method that creates a Node instance from JsonObject.
-     *
-     * @param nodeJson json object at current level containg values as properties
-     * @return deserialized node including all children.
-     * @implNote the Node instance will be constructed by the properties defined in the meta model.
-     *           Non meta properties will be set after Node is instantiated.
-     * @implNote comment is included in the propertyKey meta model, but not set when constructing the Node instance.
-     *           That is, comment is not included in the constructor propertyKey list, and therefore needs to be set
-     *           after constructing the node.
-     *           See {@link com.github.javaparser.metamodel.BaseNodeMetaModel#construct(Map)} how the node is contructed
-     */
+   
     private Node deserializeObject(JsonObject nodeJson) {
         try {
             String serializedNodeType = nodeJson.getString(JsonNode.CLASS.propertyKey);
@@ -52,10 +29,6 @@ public class JavaParserJsonDeserializer {
             Map<String, Object> parameters = new HashMap<>();
             Map<String, JsonValue> deferredJsonValues = new HashMap<>();
 
-            for (String name : nodeJson.keySet()) {
-                if (name.equals(JsonNode.CLASS.propertyKey)) {
-                    continue;
-                }
 
                 Optional<PropertyMetaModel> optionalPropertyMetaModel = nodeMetaModel.getAllPropertyMetaModels().stream()
                         .filter(mm -> mm.getName().equals(name))
@@ -84,13 +57,17 @@ public class JavaParserJsonDeserializer {
                     }
                 }
             }
+                    public int getUnsupported() {
+                            return unsupported;
+                       }
 
+        public int getFailures() {
+            return failures;
+        }
             Node node = nodeMetaModel.construct(parameters);
             // COMMENT is in the propertyKey meta model, but not required as constructor parameter.
             // Set it after construction
-            if (parameters.containsKey(JsonNode.COMMENT.propertyKey)) {
-                node.setComment((Comment)parameters.get(JsonNode.COMMENT.propertyKey));
-            }
+            
 
             for (String name : deferredJsonValues.keySet()) {
                 if (!readNonMetaProperties(name, deferredJsonValues.get(name), node)) {
@@ -133,7 +110,8 @@ public class JavaParserJsonDeserializer {
                     jsonObject.getInt(JsonRange.END_LINE.propertyKey),
                     jsonObject.getInt(JsonRange.END_COLUMN.propertyKey)
             );
-            node.setRange(new Range(begin, end));
+            
+            node.setRange(new Range(end, begin));
             return true;
         }
         return false;
@@ -162,15 +140,6 @@ public class JavaParserJsonDeserializer {
         );
     }
 
-    /**
-     * This method sets symbol resolver to Node if it is an instance of CompilationUnit
-     * and a SymbolResolver is configured in the static configuration. This is necessary to be able to resolve symbols
-     * within the cu after deserialization. Normally, when parsing java with JavaParser, the symbol resolver is injected
-     * to the cu as a data element with key SYMBOL_RESOLVER_KEY.
-     * @param node instance to which symbol resolver will be set to when instance of a Compilation Unit
-     * @see com.github.javaparser.ast.Node#SYMBOL_RESOLVER_KEY
-     * @see com.github.javaparser.ParserConfiguration#ParserConfiguration()
-     */
     private void setSymbolResolverIfCompilationUnit(Node node) {
         if (node instanceof CompilationUnit && StaticJavaParser.getConfiguration().getSymbolResolver().isPresent()) {
             CompilationUnit cu = (CompilationUnit)node;
