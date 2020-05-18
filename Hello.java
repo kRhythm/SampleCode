@@ -41,10 +41,29 @@ abstract class BasicJBehaveTest extends JUnitStories {
             }
         });
     }
+    private String toString(MethodCallExpr node) {
+        try {
+            return toString(JavaParserFacade.get(typeSolver).solve(node));
+        } catch (Exception e) {
+            if (verbose) {
+                System.err.println("Error resolving call at L" + lineNr(node) + ": " + node);
+                e.printStackTrace();
+            }
+            return "ERROR";
+        }
+    }
+
+    private String toString(SymbolReference<ResolvedMethodDeclaration> methodDeclarationSymbolReference) {
+        if (methodDeclarationSymbolReference.isSolved()) {
+            return methodDeclarationSymbolReference.getCorrespondingDeclaration().getQualifiedSignature();
+        } else {
+            return "UNSOLVED";
+        }
+    }
+    
     private List<Node> collectAllNodes(Node node) {
         List<Node> nodes = new ArrayList<>();
-        node.walk(nodes::add);
-        nodes.sort(comparing(n -> n.getBegin().get()));
+        
         return nodes;
     }
     
@@ -59,6 +78,7 @@ abstract class BasicJBehaveTest extends JUnitStories {
                     CompilationUnit cu = parse(file);
                     solveMethodCalls(cu);
                 }
+                
                 return FileVisitResult.CONTINUE;
             }
         });
