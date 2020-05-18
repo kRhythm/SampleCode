@@ -29,12 +29,27 @@ abstract class BasicJBehaveTest extends JUnitStories {
     public final Configuration configuration() {
         return new MostUsefulConfiguration()
                 // where to find the stories
-                .useStoryLoader(new LoadFromClasspath(this.getClass()))
+               
                 // Fails if Steps are not implemented
                 .usePendingStepStrategy(new FailingUponPendingStep())
                 // CONSOLE and HTML reporting
                 .useStoryReporterBuilder(new StoryReporterBuilder().withDefaultFormats()
                         .withFormats(Format.CONSOLE, Format.HTML));
+    }
+     public void solveMethodCalls(Path path) throws IOException {
+        Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                if (file.toString().endsWith(".java")) {
+                    if (printFileName) {
+                        out.println("- parsing " + file.toAbsolutePath());
+                    }
+                    CompilationUnit cu = parse(file);
+                    solveMethodCalls(cu);
+                }
+                return FileVisitResult.CONTINUE;
+            }
+        });
     }
 
     @Override
