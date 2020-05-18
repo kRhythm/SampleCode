@@ -33,9 +33,7 @@ abstract class BasicJBehaveTest extends JUnitStories {
                     if (printFileName) {
                         out.println("- parsing " + file.toAbsolutePath());
                     }
-                    CompilationUnit cu = parse(file);
-                    List<Node> nodes = collectAllNodes(cu);
-                    nodes.forEach(n -> solve(n));
+                    
                 }
                 return FileVisitResult.CONTINUE;
             }
@@ -74,6 +72,7 @@ abstract class BasicJBehaveTest extends JUnitStories {
                 if (file.toString().endsWith(".java")) {
                     if (printFileName) {
                         out.println("- parsing " + file.toAbsolutePath());
+                        System.out.println("Hello there");
                     }
                     CompilationUnit cu = parse(file);
                     solveMethodCalls(cu);
