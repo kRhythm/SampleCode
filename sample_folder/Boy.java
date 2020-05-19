@@ -17,17 +17,7 @@ public class SourceFileInfoExtractor {
     private PrintStream err = System.err;
     private boolean verbose = false;
 
-    public SourceFileInfoExtractor(TypeSolver typeSolver) {
-        this.typeSolver = typeSolver;
-    }
-
-    public void setVerbose(boolean verbose) {
-        this.verbose = verbose;
-    }
-
-    public void setPrintFileName(boolean printFileName) {
-        this.printFileName = printFileName;
-    }
+    
 
     public void setOut(PrintStream out) {
         this.out = out;
