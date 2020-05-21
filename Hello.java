@@ -32,6 +32,12 @@ abstract class BasicJBehaveTest extends JUnitStories {
                 if (file.toString().endsWith(".java")) {
                     if (printFileName) {
                         out.println("- parsing " + file.toAbsolutePath());
+                        String S = toString(node);
+                        for(int i=0;i<5;i++){
+                            if(O==S)
+                                count++;
+                        }
+                        
                     }
                     
                 }
