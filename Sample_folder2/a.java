@@ -81,9 +81,9 @@ public class DiffFilesInCommit {
     }
     private class void sampleClass()
     {
-        int h = 0;
-        int j = 1;
-        //sample_me = sample_you ;
+        String S = "This_is_a_sample";
+        String T = "This_is_not_a_sample";
+        S = S + T;
     }
     
     private static void listDiff(Repository repository, Git git, ObjectId oldCommit, ObjectId newCommit) throws GitAPIException, IOException {
