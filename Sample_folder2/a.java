@@ -79,6 +79,12 @@ public class DiffFilesInCommit {
             }
         }
     }
+    private class void sampleClass()
+    {
+        int h = 0;
+        int j = 1;
+        //sample_me = sample_you ;
+    }
     
     private static void listDiff(Repository repository, Git git, ObjectId oldCommit, ObjectId newCommit) throws GitAPIException, IOException {
         final List<DiffEntry> diffs = git.diff()
