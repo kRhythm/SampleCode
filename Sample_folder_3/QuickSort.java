@@ -75,4 +75,20 @@ class QuickSort
 		printArray(arr); 
 	} 
 } 
+private class void Hello
+{
+	int i;
+	for(i=0;i<11;i++)
+		{
+			int j = i*i;
+		}
+	static void hello_method()
+		{
+			while(j>=10)
+			{
+				System.out.println(j);
+				j = j/2;
+			}
+		}
+}
 /*This code is contributed by Rajat Mishra */
